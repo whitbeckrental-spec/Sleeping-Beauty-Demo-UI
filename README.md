@@ -1,5 +1,3 @@
-# Sleeping-Beauty-Demo-UI
-Custom chat interface for an AI bot 
 # SMS AI Demo - Reactivation Campaign Chatbot
 
 A demo tool that simulates AI-powered SMS conversations for client reactivation campaigns. Built with an iMessage-style interface so you can show clients exactly how the AI would text their leads.
