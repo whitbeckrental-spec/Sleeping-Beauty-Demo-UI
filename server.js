@@ -21,7 +21,7 @@ const openai = new OpenAI({
 // Chat endpoint
 app.post('/api/chat', async (req, res) => {
     try {
-        const { sessionId, message, systemMessage, promptContext, isNewConversation } = req.body;
+        const { sessionId, message, systemMessage, promptContext, isNewConversation, model } = req.body;
 
         if (!message) {
             return res.status(400).json({ error: 'Message is required' });
@@ -55,7 +55,10 @@ app.post('/api/chat', async (req, res) => {
         // Build the full system prompt (system message + context)
         let fullSystemPrompt = conversation.systemMessage;
         if (conversation.promptContext) {
-            fullSystemPrompt += `\n\n--- CONTEXT & KNOWLEDGE BASE ---\n${conversation.promptContext}`;
+            fullSystemPrompt += `
+
+--- CONTEXT & KNOWLEDGE BASE ---
+${conversation.promptContext}`;
         }
 
         // Build messages array for OpenAI
@@ -64,11 +67,12 @@ app.post('/api/chat', async (req, res) => {
             ...conversation.messages
         ];
 
-        // Call OpenAI API
+        // Call OpenAI API - use requested model or fall back to env var or default
+        const selectedModel = model || process.env.OPENAI_MODEL || 'gpt-4.1';
         const completion = await openai.chat.completions.create({
-            model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+            model: selectedModel,
             messages: apiMessages,
-            max_tokens: 500,
+            max_tokens: 2000,
             temperature: 0.7
         });
 
